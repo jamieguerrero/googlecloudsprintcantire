@@ -36,9 +36,10 @@ function handleSuccess(stream) {
                 var blob = new Blob(chunks, { 'type' : 'audio/wav; codecs=opus' });
                 chunks = [];
 
-                var url = URL.createObjectURL(blob);
-                var ahref = document.getElementById('downloadblob'); 
-                ahref.href = url
+                // Add url attribute to anchor
+                // var url = URL.createObjectURL(blob);
+                // var ahref = document.getElementById('downloadblob'); 
+                // ahref.href = url
 
                 //Send audio file to flask API
                 var xhr = new XMLHttpRequest();
@@ -49,7 +50,6 @@ function handleSuccess(stream) {
                 xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
                 xhr.send(fd)
                 console.log("sent the blob")
-
             }
         })
 

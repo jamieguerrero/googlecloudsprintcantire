@@ -21,6 +21,9 @@ def post_audio():
         blob = request.get_data()
         data = request.data
 
+        blob2 = str(request.form).split(',')
+        print blob2
+
         # Open file and write binary (blob) data
         f = open('./audio.wav', 'w+')
         f.write(request.data)
@@ -29,6 +32,7 @@ def post_audio():
         params = (('key', 'AIzaSyAxgxicufBuHtEMsqScWdu4Uaivs0Laox4'),)
 
         # =========================Storage API=========================
+        # storage REST api
         # storageAPI = 'https://www.googleapis.com/storage/v1/b/canadiantired/o/test.wav'
         # storageResponse = requests.get(url=storageAPI, params=params)
         # print storageResponse.text
@@ -75,7 +79,7 @@ def post_audio():
                 "language_code": "en-US"
             },
             "audio": {
-                "uri":"gs://canadiantired/audio.wav"
+                "uri":"gs://canadiantired/test.wav"
             }
         }
         speechData = json.dumps(speech)
