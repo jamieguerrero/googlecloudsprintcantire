@@ -39,7 +39,29 @@ function handleSuccess(stream) {
 
             var blob = new Blob(chunks, { 'type' : 'audio/wav; codecs=opus' });
             chunks = [];
-            console.log(blob.toString('base64'));
+
+            localStorage.setItem('myTest', JSON.stringify(blob.toString()));
+            var url = URL.createObjectURL(blob);
+
+            var ahref = document.getElementById("downloadtheblob")
+            ahref.href = url
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'http://127.0.0.1:5002/api/audio', true);
+
+            //Send the proper header information along with the request
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+            xhr.onreadystatechange = function() {
+                //Call a function when the state changes.
+                if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+                    // Request finished. Do processing here.
+                    console.log("finished XMLHttpRequest")
+                }
+            }
+            console.log("Got here!")
+            xhr.send(blob)
+
             }
         })
 
