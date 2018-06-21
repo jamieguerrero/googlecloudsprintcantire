@@ -38,7 +38,7 @@ def post_audio():
 
         #This creates a new bucket
         # # The name for the new bucket
-        bucket_name = 'canadiantired2'
+        bucket_name = 'canadiantired'
 
         # # Creates the new bucket
         # bucket = storage_client.create_bucket(bucket_name)
@@ -51,7 +51,11 @@ def post_audio():
             bucket = storage_client.get_bucket(bucket_name)
             blob = bucket.blob(destination_blob_name)
 
+            print('Blob {} is publicly accessible at {}'.format( 
+                blob.name, blob.public_url))
+
             blob.upload_from_filename(source_file_name)
+            blob.make_public()
 
             print('File {} uploaded to {}.'.format(
                 source_file_name,
@@ -71,7 +75,7 @@ def post_audio():
                 "language_code": "en-US"
             },
             "audio": {
-                "uri":"gs://canadiantired/test.wav"
+                "uri":"gs://canadiantired/audio.wav"
             }
         }
         speechData = json.dumps(speech)
