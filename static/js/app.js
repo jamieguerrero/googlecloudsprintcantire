@@ -33,19 +33,20 @@ function handleSuccess(stream) {
             
                 console.log("recorder stopped");
 
-                // var clipName = prompt('Enter a name for your sound clip');
-
                 var blob = new Blob(chunks, { 'type' : 'audio/wav; codecs=opus' });
                 chunks = [];
+
+                var url = URL.createObjectURL(blob);
+                var ahref = document.getElementById('downloadblob'); 
+                ahref.href = url
 
                 //Send audio file to flask API
                 var xhr = new XMLHttpRequest();
                 var fd = new FormData();
-                fd.append("wav", blob)
+                fd.append("file", blob, 'audio.wav')
                 xhr.open('POST', 'http://127.0.0.1:5005/api/audio', true);
                 //Send the proper header information along with the request
                 xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                // xhr.send(fd)
                 xhr.send(fd)
                 console.log("sent the blob")
 

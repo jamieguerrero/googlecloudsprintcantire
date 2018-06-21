@@ -1,18 +1,10 @@
-import io, os, sys, wave
+import io, os, sys, wave, requests, json
 
 from flask import Flask, render_template, request, redirect, Response
 from flask_cors import CORS
 
-# Imports the Google Cloud client library
-from google.cloud import speech
-from google.cloud.speech import enums
-from google.cloud.speech import types
-
 app = Flask(__name__)
 CORS(app)
-
-# Instantiates a client
-client = speech.SpeechClient(credentials="qwiklabs-gcp-9586e575cae6194c.json")
 
 @app.route('/')
 def hello_world():
@@ -24,34 +16,35 @@ def post_audio():
          # get data using flask
         blob = request.get_data()
         data = request.data
-        print data
+        # print data
 
         # Open file and write binary (blob) data
         f = open('./file.wav', 'wb')
         f.write(request.data)
         f.close()
-        return "Binary message written!"
-        
-        # readblob = open(data).read() # such as `readblob.read()`
-        # audio.writeframes(readblob)
 
-        # print audio
-       
-        # # Loads the audio into memory
-        # audio = types.RecognitionAudio(content=blob)
+        params = (('key', 'AIzaSyB9-zDftEXnwBxQKJGivvS8Ku11ehMH3ac'),)
 
-        # config = types.RecognitionConfig(
-        #     encoding=enums.RecognitionConfig.AudioEncoding.LINEAR16,
-        #     sample_rate_hertz=16000,
-        #     language_code='en-US')
+        headers = {'Content-Type': 'application/json'}
 
-        # # Detects speech in the audio file
-        # response = client.recognize(config, audio)
+        data = {
+            "config": {
+                "encoding":"FLAC",
+                "sample_rate": 16000,
+                "language_code": "en-US"
+            },
+            "audio": {
+                "uri":"gs://cloud-samples-tests/speech/brooklyn.flac"
+            }
+        }
 
-        # for result in response.results:
-        #     print('Transcript: {}'.format(result.alternatives[0].transcript))
+        jsonData = json.dumps(data)
 
-        return data
+        api_url = 'https://speech.googleapis.com/v1beta1/speech:syncrecognize'
+        r = requests.post(url=api_url, data=jsonData, params=params, headers=headers)
+        print(r.status_code, r.reason, r.text)
+
+        return r.text
 
 if __name__ == '__main__':
     app.run(use_reloader=True, port=5005)
