@@ -23,24 +23,16 @@ def post_audio():
         # Open file and write binary (blob) data
         f = open('./file.wav', 'w+')
         f.write(request.data)
-        f.close()
 
         params = (('key', 'AIzaSyAxgxicufBuHtEMsqScWdu4Uaivs0Laox4'),)
-
-        # Datastore Data
-        myBucket = 'canadiantired'
-        storeHeaders = {
-            'Content-Type': 'audio/wav',
-            'Authorization':  'Bearer AIzaSyAxgxicufBuHtEMsqScWdu4Uaivs0Laox4'
-        }
-
         os.environ['GOOGLE_APPLICATION_CREDENTIALS']='credentials.json'
 
         # Instantiates a client
         datastore_client = datastore.Client()
 
-        task = datastore_client.key('sampletask1')
-        print(datastore_client.get(task))
+        task = datastore_client.key('blob_value', f)
+        print(datastore_client.post(task))
+        f.close()
 
         # # The kind for the new entity
         # kind = 'Task'
@@ -63,7 +55,6 @@ def post_audio():
         # send f file to datastore
         # storeResponse = requests.post(url=storeAPI, data=f, params=params)
         # print(storeResponse.status_code, storeResponse.reason, storeResponse.text)
-
 
         # Speech Data
         speechHeaders = {'Content-Type': 'application/json'}
