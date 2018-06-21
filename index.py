@@ -15,6 +15,10 @@ CORS(app)
 # Instantiates a client
 client = speech.SpeechClient(credentials="qwiklabs-gcp-9586e575cae6194c.json")
 
+@app.route('/')
+def hello_world():
+    return render_template('index.html')
+
 @app.route('/api/audio', methods = ['POST'])
 def post_audio():
     if request.method == 'POST':
