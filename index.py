@@ -4,7 +4,8 @@ from flask import Flask, render_template, request, redirect, Response
 from flask_cors import CORS
 
 # Imports the Google Cloud client library
-from google.cloud import datastore
+from google.cloud import storage
+from google.cloud import speech
 
 app = Flask(__name__)
 CORS(app)
@@ -21,56 +22,61 @@ def post_audio():
         data = request.data
 
         # Open file and write binary (blob) data
-        f = open('./file.wav', 'w+')
+        f = open('./audio.wav', 'w+')
         f.write(request.data)
 
-        params = (('key', 'AIzaSyAxgxicufBuHtEMsqScWdu4Uaivs0Laox4'),)
         os.environ['GOOGLE_APPLICATION_CREDENTIALS']='credentials.json'
+        params = (('key', 'AIzaSyAxgxicufBuHtEMsqScWdu4Uaivs0Laox4'),)
+
+        # =========================Storage API=========================
+        # storageAPI = 'https://www.googleapis.com/storage/v1/b/canadiantired/o/test.wav'
+        # storageResponse = requests.get(url=storageAPI, params=params)
+        # print storageResponse.text
 
         # Instantiates a client
-        datastore_client = datastore.Client()
+        storage_client = storage.Client()
 
-        task = datastore_client.key('blob_value', f)
-        print(datastore_client.post(task))
-        f.close()
+        #This creates a new bucket
+        # # The name for the new bucket
+        bucket_name = 'canadiantired2'
 
-        # # The kind for the new entity
-        # kind = 'Task'
-        # # The name/ID for the new entity
-        # name = 'sampletask1'
-        # # The Cloud Datastore key for the new entity
-        # task_key = datastore_client.key(kind, name)
+        # # Creates the new bucket
+        # bucket = storage_client.create_bucket(bucket_name)
 
-        # # Prepares the new entity
-        # task = datastore.Entity(key=task_key)
-        # task['description'] = 'Buy milk'
+        # print('Bucket {} created.'.format(bucket.name))
 
-        # # Saves the entity
-        # datastore_client.put(task)
+        def upload_blob(bucket_name, source_file_name, destination_blob_name):
+            """Uploads a file to the bucket."""
+            storage_client = storage.Client()
+            bucket = storage_client.get_bucket(bucket_name)
+            blob = bucket.blob(destination_blob_name)
 
-        # print('Saved {}: {}'.format(task.key.name, task['description']))
+            blob.upload_from_filename(source_file_name)
 
+            print('File {} uploaded to {}.'.format(
+                source_file_name,
+                destination_blob_name))
 
-        # storeAPI = 'https://datastore.googleapis.com/v1/upload/storage/v1/b/' + myBucket + '/o?uploadType=media&name=myObject'
-        # send f file to datastore
-        # storeResponse = requests.post(url=storeAPI, data=f, params=params)
-        # print(storeResponse.status_code, storeResponse.reason, storeResponse.text)
+        upload_blob(bucket_name, 'audio.wav', 'audio.wav')
+        
 
-        # Speech Data
+        # =========================Speech Data API=========================
+        # Here down works
+        
         speechHeaders = {'Content-Type': 'application/json'}
         speech = {
             "config": {
-                "encoding":"FLAC",
+                "encoding":"LINEAR16",
                 "sample_rate": 16000,
                 "language_code": "en-US"
             },
             "audio": {
-                "uri":"gs://cloud-samples-tests/speech/brooklyn.flac"
+                "uri":"gs://canadiantired/test.wav"
             }
         }
         speechData = json.dumps(speech)
-
         speechAPI = 'https://speech.googleapis.com/v1beta1/speech:syncrecognize'
+
         speechResponse = requests.post(url=speechAPI, data=speechData, params=params, headers=speechHeaders)
         print(speechResponse.status_code, speechResponse.reason, speechResponse.text)
 
