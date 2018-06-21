@@ -9,58 +9,45 @@ function handleSuccess(stream) {
         // Success callback
         .then(function(stream) {
             var mediaRecorder = new MediaRecorder(stream);
-            console.log(stream)
+
             record.onmousedown = function() {
                 mediaRecorder.start();
                 console.log(mediaRecorder.state);
                 console.log("recorder started");
-                record.style.background = "red";
-                record.style.color = "black";
             }
 
             record.onmouseup = function() {
                 mediaRecorder.stop();
                 console.log(mediaRecorder.state);
                 console.log("recorder stopped");
-                record.style.background = "";
-                record.style.color = "";
             }
 
+            // Take audio chunks and turn into blob
             var chunks = [];
             mediaRecorder.ondataavailable = function(e) {
-            chunks.push(e.data);
+                chunks.push(e.data);
             }
 
+            // When recording stops, send off to flask api
             mediaRecorder.onstop = function(e) {
             
-            console.log("recorder stopped");
+                console.log("recorder stopped");
 
-            var clipName = prompt('Enter a name for your sound clip');
+                // var clipName = prompt('Enter a name for your sound clip');
 
-            var blob = new Blob(chunks, { 'type' : 'audio/wav; codecs=opus' });
-            chunks = [];
+                var blob = new Blob(chunks, { 'type' : 'audio/wav; codecs=opus' });
+                chunks = [];
 
-            localStorage.setItem('myTest', JSON.stringify(blob.toString()));
-            var url = URL.createObjectURL(blob);
-
-            var ahref = document.getElementById("downloadtheblob")
-            ahref.href = url
-
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', 'http://127.0.0.1:5002/api/audio', true);
-
-            //Send the proper header information along with the request
-            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-            xhr.onreadystatechange = function() {
-                //Call a function when the state changes.
-                if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
-                    // Request finished. Do processing here.
-                    console.log("finished XMLHttpRequest")
-                }
-            }
-            console.log("Got here!")
-            xhr.send(blob)
+                //Send audio file to flask API
+                var xhr = new XMLHttpRequest();
+                var fd = new FormData();
+                fd.append("wav", blob)
+                xhr.open('POST', 'http://127.0.0.1:5005/api/audio', true);
+                //Send the proper header information along with the request
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                // xhr.send(fd)
+                xhr.send(fd)
+                console.log("sent the blob")
 
             }
         })

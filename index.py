@@ -1,5 +1,4 @@
-import io
-import os
+import io, os, sys, wave
 
 from flask import Flask, render_template, request, redirect, Response
 from flask_cors import CORS
@@ -22,25 +21,37 @@ def hello_world():
 @app.route('/api/audio', methods = ['POST'])
 def post_audio():
     if request.method == 'POST':
-        # get data using flask
+         # get data using flask
         blob = request.get_data()
-        print blob
+        data = request.data
+        print data
 
-        # Loads the audio into memory
-        audio = types.RecognitionAudio(content=blob)
+        # Open file and write binary (blob) data
+        f = open('./file.wav', 'wb')
+        f.write(request.data)
+        f.close()
+        return "Binary message written!"
+        
+        # readblob = open(data).read() # such as `readblob.read()`
+        # audio.writeframes(readblob)
 
-        config = types.RecognitionConfig(
-            encoding=enums.RecognitionConfig.AudioEncoding.LINEAR16,
-            sample_rate_hertz=16000,
-            language_code='en-US')
+        # print audio
+       
+        # # Loads the audio into memory
+        # audio = types.RecognitionAudio(content=blob)
 
-        # Detects speech in the audio file
-        response = client.recognize(config, audio)
+        # config = types.RecognitionConfig(
+        #     encoding=enums.RecognitionConfig.AudioEncoding.LINEAR16,
+        #     sample_rate_hertz=16000,
+        #     language_code='en-US')
 
-        for result in response.results:
-            print('Transcript: {}'.format(result.alternatives[0].transcript))
+        # # Detects speech in the audio file
+        # response = client.recognize(config, audio)
 
-        return response
+        # for result in response.results:
+        #     print('Transcript: {}'.format(result.alternatives[0].transcript))
+
+        return data
 
 if __name__ == '__main__':
-    app.run(use_reloader=True, port=5002)
+    app.run(use_reloader=True, port=5005)
