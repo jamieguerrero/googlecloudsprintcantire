@@ -1,33 +1,27 @@
 <!doctype html> 
-<!-- 
+
 <head> 
+    <title>so canadian tired</title>
     <script src="https://aframe.io/releases/0.8.0/aframe.min.js"></script> 
     <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/1.5.5/aframe/build/aframe-ar.js"></script> 
     <script src="https://rawgit.com/donmccurdy/aframe-extras/v2.1.1/dist/aframe-extras.loaders.min.js"></script> 
 </head> 
 <body style='margin : 0px; overflow: hidden;'> 
-    <a-scene embedded arjs='sourceType: webcam;'> 
-    <!-- <a-box position='0 0.5 0' material='opacity: 0.5;'></a-box> 
-    <a-assets> 
+    <!-- <a-scene embedded arjs='sourceType: webcam;'>  -->
+        <section class="main-controls">
+            <div id="buttons">
+                <button class="record">Push to Talk</button>
+            </div>
+            <a id="downloadblob">Download the clip</a>
+        </section>
+    <!-- <a-box position='0 0.5 0' material='opacity: 0.5;'></a-box> -->
+    <!-- <a-assets> 
         <a-asset-item id="myModelObj" src="chr_knight.obj"></a-asset-item> 
         <a-asset-item id="myModelMtl" src="chr_knight.mtl"></a-asset-item> 
     </a-assets> 
-    <a-entity scale=".05 .05 .05" rotation="270 0 0" position='0 0.5 -0.5' obj-model="obj: #myModelObj; mtl: #myModelMtl"></a-entity> 
-    <a-marker-camera preset='kanji'></a-marker-camera> 
-    <!-- <a-marker-camera type='pattern' patternurl='pattern-marker.patt'></a-marker-camera> 
-    </a-scene> 
-    <button></button>
-</body> -->
-<head>
-    <title>so canadian tired</title>
-</head>
-<body>
-    <section class="main-controls">
-        <div id="buttons">
-            <button class="record">Push to Talk</button>
-        </div>
-        <a id="downloadblob">Download the clip</a>
-    </section>
+    <a-entity scale=".05 .05 .05" rotation="270 0 0" position='0 0.5 -0.5' obj-model="obj: #myModelObj; mtl: #myModelMtl"></a-entity>  -->
+    <!-- <a-marker-camera preset='kanji'></a-marker-camera> 
+    </a-scene>  -->
 
     <script type="text/javascript" src="../static/js/app.js"></script>
 </body>
