@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react';
+import Camera from './Camera';
 import './App.css';
 import Button from '@material-ui/core/Button'
 class App extends Component {
@@ -36,6 +37,8 @@ class App extends Component {
   render() {
     var hits = this.state.hits;
     return (
+        <Fragment>
+        <Camera />
         <section className="main-controls">
               <div id="buttons">
                   <Button className="record">Push to Talk</Button>
@@ -49,7 +52,7 @@ class App extends Component {
                   }) : ""}
 
               </ul>
-        </section>
+        </section></Fragment>
     );
   }
 }
