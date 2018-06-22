@@ -113,7 +113,7 @@ def post_audio():
 
         elasticData = json.dumps(elastic)
         # data = open('request.json', 'rb').read() #json request file required
-        elasticResponse = requests.get('http://104.198.254.220:9200/_search?q=Brooklyn')
+        elasticResponse = requests.get('http://104.198.254.220:9200/_search?q=bike')
         # a = json.loads(response.text)
 
         print elasticResponse
