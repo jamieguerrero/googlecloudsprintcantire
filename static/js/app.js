@@ -65,7 +65,6 @@ function handleSuccess(stream) {
                     document.getElementById('productdescription').innerHTML = data;
                     console.log(data);
                 });
-
             }
         })
 

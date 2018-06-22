@@ -15,8 +15,25 @@ CORS(app)
 def hello_world():
     return render_template('index.html')
 
-@app.route('/api/audio', methods = ['POST'])
+@app.route('/api/audio', methods = ['POST', 'GET'])
 def post_audio():
+    if request.method == 'GET':
+        # =========================ElasticSearch API=========================
+        elasticHeaders = {'Content-Type': 'application/json', }
+        elastic = {
+                
+                "productid" : "bike4",
+                "eng_desc" : "how old is the Brooklyn Bridge",
+                "ratings" : "3"                
+        }
+        elasticData = json.dumps(elastic)
+
+        # data = open('request.json', 'rb').read() #json request file required
+        elasticResponse = requests.get('http://104.198.254.220:9200/_search?q=bike')
+        # a = json.loads(response.text)
+
+        return elasticResponse.text
+
     if request.method == 'POST':
          # get data using flask
         blob = request.get_data()
@@ -101,23 +118,7 @@ def post_audio():
         speechResponse = requests.post(url=speechAPI, data=speechData, params=params, headers=speechHeaders)
         # print(speechResponse.status_code, speechResponse.reason, speechResponse.text)
 
-        # =========================ElasticSearch API=========================
-        elasticHeaders = {'Content-Type': 'application/json', }
-        elastic = {
-                
-                "productid" : "bike4",
-                "eng_desc" : "how old is the Brooklyn Bridge",
-                "ratings" : "3"
-                
-        }
-
-        elasticData = json.dumps(elastic)
-        # data = open('request.json', 'rb').read() #json request file required
-        elasticResponse = requests.get('http://104.198.254.220:9200/_search?q=Brooklyn')
-        # a = json.loads(response.text)
-
-        print elasticResponse
-        return elasticResponse.text
+        return speechResponse.text
 
 if __name__ == '__main__':
     app.run(use_reloader=True, port=5005)
