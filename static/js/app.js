@@ -30,26 +30,42 @@ function handleSuccess(stream) {
 
             // When recording stops, send off to flask api
             mediaRecorder.onstop = function(e) {
-            
+                // console.log("chunks" + chunks[0])
                 console.log("recorder stopped");
 
                 var blob = new Blob(chunks, { 'type' : 'audio/wav; codecs=opus' });
+                // console.log(blob)
                 chunks = [];
 
                 // Add url attribute to anchor
-                // var url = URL.createObjectURL(blob);
-                // var ahref = document.getElementById('downloadblob'); 
-                // ahref.href = url
+                var url = URL.createObjectURL(blob);
+                var ahref = document.getElementById('downloadblob'); 
+                ahref.href = url
 
                 //Send audio file to flask API
-                var xhr = new XMLHttpRequest();
+                // var xhr = new XMLHttpRequest();
+                // var fd = new FormData();
+                // fd.append("file", blob, 'audio.wav')
+                // xhr.open('POST', 'http://127.0.0.1:5005/api/audio', true);
+                // //Send the proper header information along with the request
+                // xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                // xhr.send(fd)
+                // console.log("sent the blob")
+
                 var fd = new FormData();
-                fd.append("file", blob, 'audio.wav')
-                xhr.open('POST', 'http://127.0.0.1:5005/api/audio', true);
-                //Send the proper header information along with the request
-                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                xhr.send(fd)
-                console.log("sent the blob")
+                fd.append('file', 'audio.wav');
+                fd.append('data', blob);
+                $.ajax({
+                    type: 'POST',
+                    url: 'http://127.0.0.1:5005/api/audio',
+                    data: fd,
+                    processData: false,
+                    contentType: false
+                }).done(function(data) {
+                    document.getElementById('productdescription').innerHTML = data;
+                    console.log(data);
+                });
+
             }
         })
 

@@ -1,7 +1,8 @@
 import io, os, sys, wave, requests, json
 
-from flask import Flask, render_template, request, redirect, Response
+from flask import Flask, render_template, request, redirect, Response, send_file
 from flask_cors import CORS
+from pydub import AudioSegment
 
 # Imports the Google Cloud client library
 from google.cloud import storage
@@ -19,14 +20,14 @@ def post_audio():
     if request.method == 'POST':
          # get data using flask
         blob = request.get_data()
-        data = request.data
-
-        blob2 = str(request.form).split(',')
-        print blob2
+        print (request.form['file'])
+        print "======"
+        print(request.data)
 
         # Open file and write binary (blob) data
         f = open('./audio.wav', 'w+')
         f.write(request.data)
+        f.close()
 
         os.environ['GOOGLE_APPLICATION_CREDENTIALS']='credentials.json'
         params = (('key', 'AIzaSyAxgxicufBuHtEMsqScWdu4Uaivs0Laox4'),)
@@ -72,23 +73,51 @@ def post_audio():
         # Here down works
         
         speechHeaders = {'Content-Type': 'application/json'}
+        # speech = {
+        #     "config": {
+        #         "encoding":"LINEAR16",
+        #         "sample_rate": 16000,
+        #         "language_code": "en-US"
+        #     },
+        #     "audio": {
+        #         "uri":"gs://canadiantired/audio.wav"
+        #     }
+        # }
+
         speech = {
             "config": {
-                "encoding":"LINEAR16",
+                "encoding":"FLAC",
                 "sample_rate": 16000,
                 "language_code": "en-US"
             },
             "audio": {
-                "uri":"gs://canadiantired/test.wav"
+                "uri":"gs://cloud-samples-tests/speech/brooklyn.flac"
             }
         }
+        
         speechData = json.dumps(speech)
         speechAPI = 'https://speech.googleapis.com/v1beta1/speech:syncrecognize'
 
         speechResponse = requests.post(url=speechAPI, data=speechData, params=params, headers=speechHeaders)
-        print(speechResponse.status_code, speechResponse.reason, speechResponse.text)
+        # print(speechResponse.status_code, speechResponse.reason, speechResponse.text)
 
-        return speechResponse.text
+        # =========================ElasticSearch API=========================
+        elasticHeaders = {'Content-Type': 'application/json', }
+        elastic = {
+                
+                "productid" : "bike4",
+                "eng_desc" : "how old is the Brooklyn Bridge",
+                "ratings" : "3"
+                
+        }
+
+        elasticData = json.dumps(elastic)
+        # data = open('request.json', 'rb').read() #json request file required
+        elasticResponse = requests.get('http://104.198.254.220:9200/_search?q=Brooklyn')
+        # a = json.loads(response.text)
+
+        print elasticResponse
+        return elasticResponse.text
 
 if __name__ == '__main__':
     app.run(use_reloader=True, port=5005)
