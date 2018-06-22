@@ -118,7 +118,24 @@ def post_audio():
         speechResponse = requests.post(url=speechAPI, data=speechData, params=params, headers=speechHeaders)
         # print(speechResponse.status_code, speechResponse.reason, speechResponse.text)
 
-        return speechResponse.text
+
+         # =========================ElasticSearch API=========================
+        elasticHeaders = {'Content-Type': 'application/json', }
+        elastic = {
+                
+                "productid" : "bike4",
+                "eng_desc" : "how old is the Brooklyn Bridge",
+                "ratings" : "3"
+                
+        }
+ 
+        elasticData = json.dumps(elastic)
+        # data = open('request.json', 'rb').read() #json request file required
+        elasticResponse = requests.get('http://104.198.254.220:9200/_search?q=bike')
+        # a = json.loads(response.text)
+ 
+        print elasticResponse
+        return elasticResponse.text
 
 if __name__ == '__main__':
     app.run(use_reloader=True, port=5005)

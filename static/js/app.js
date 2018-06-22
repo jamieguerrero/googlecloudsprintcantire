@@ -38,9 +38,9 @@ function handleSuccess(stream) {
                 chunks = [];
 
                 // Add url attribute to anchor
-                var url = URL.createObjectURL(blob);
-                var ahref = document.getElementById('downloadblob'); 
-                ahref.href = url
+                // var url = URL.createObjectURL(blob);
+                // var ahref = document.getElementById('downloadblob'); 
+                // ahref.href = url
 
                 //Send audio file to flask API
                 // var xhr = new XMLHttpRequest();
